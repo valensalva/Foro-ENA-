@@ -13,8 +13,9 @@ db_name = "database.db"
 def runquery(query, parametro = () ):
     with sqlite3.connect(db_name) as conn:
         cursor = conn.cursor()
-        cursor.execute(query, parametro)
-        result = conn.commit()
+        cursor.execute(query)
+        conn.commit()
+        result = cursor.fetchall()
     return result
 
 titulo1 = tk.Label(login, text="Bienvenido, ingrese a su cuenta o cree una nueva")
@@ -28,6 +29,7 @@ btnL.grid(row=3, column=1)
 
 def logeo():
     loginpage= tk.Tk()
+    loginpage.title("Ingresar a ENA!")
     loginpage.geometry("300x200")
 
     
@@ -54,6 +56,7 @@ def logeo():
     
 def registro():
     registerpage= tk.Tk()
+    registerpage.title("Registrarse en ENA!")
     registerpage.geometry("300x200")
 
     #inputs y texto
@@ -71,15 +74,24 @@ def registro():
     #funcion de boton registrar
     def registrar(user, psw):
         query = "INSERT INTO usuario(nombre,contra) VALUES('{user}','{pasw}')".format(user= user, pasw=psw)
-        if (user == "" and psw == ""):
+        if (user == "" or psw == ""):
             warning=tk.Tk()
+            warning.title("forrrrrrrrrro")
             warning.geometry("200x100")
             wtext=tk.Label(warning, text="Completa los campos forrrrro")
             wboton=tk.Button(warning,text="bueno perdon :(", command=warning.destroy)
             wtext.grid(row=1, column=1)
             wboton.grid(row=2,column=1, pady= 15)
         else:
-            runquery(query)
+            query2 = "SELECT nombre FROM usuario WHERE nombre = '{var}'".format(var=user)
+            res12 = runquery(query2)
+            print(res12)
+            for x in res12:
+                if (len(res12)==0):
+                    runquery(query)
+                else:
+                    print("sexo")
+
             volverboton=tk.Button(registerpage, text="Volver", command=registerpage.destroy)
             volverboton.grid(row=6, column=1, pady=5)
     #################################################        
