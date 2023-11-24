@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 import sqlite3
 
 #ventana de registro
@@ -66,14 +67,14 @@ def registro():
     texto1.grid(row=1, column=1,padx= 60)
 
     texto2 = tk.Label(registerpage, text="Contraseña")
-    passinput = tk.Entry(registerpage)
-    passinput.grid(row=4, column=1,padx= 60)
-    texto2.grid(row=3, column=1,padx= 60)
+    passinput = tk.Entry(registerpage, show="*")
+    passinput.grid(row=5, column=1,padx= 60)
+    texto2.grid(row=4, column=1,padx= 60)
     #################################################
 
     #funcion de boton registrar
     def registrar(user, psw):
-        query = "INSERT INTO usuario(nombre,contra) VALUES('{user}','{pasw}')".format(user= user, pasw=psw)
+        query = "INSERT INTO usuario(nombre,contra) VALUES('{0}','{1}')".format(user, psw)
         if (user == "" or psw == ""):
             warning=tk.Tk()
             warning.title("forrrrrrrrrro")
@@ -83,21 +84,26 @@ def registro():
             wtext.grid(row=1, column=1)
             wboton.grid(row=2,column=1, pady= 15)
         else:
-            query2 = "SELECT nombre FROM usuario WHERE nombre = '{var}'".format(var=user)
-            res12 = runquery(query2)
-            print(res12)
-            for x in res12:
-                if (len(res12)==0):
-                    runquery(query)
-                else:
-                    print("sexo")
+            query2 = "SELECT * FROM usuario WHERE nombre = '{0}'".format(user)
+            res12= runquery(query2)
+            if (len(res12)== 0):
+                runquery(query)
+                volverboton=tk.Button(registerpage, text="Volver", command=registerpage.destroy)
+                volverboton.grid(row=7, column=1, pady=5)
+                logincorrecto = tk.Label(registerpage, text= "Has sido registrado correctamente!", fg="green")
+                logincorrecto.grid(row=3,column=1)
+            else:
+                warning2=tk.Label(registerpage, text="Ese usuario ya existe, usa otro, puto.", fg= "red")
+                warning2.grid(row=3, column=1)
+                warning2.after(3000,lambda:warning2.grid_forget())
 
-            volverboton=tk.Button(registerpage, text="Volver", command=registerpage.destroy)
-            volverboton.grid(row=6, column=1, pady=5)
-    #################################################        
+            
         
     btnRegistrar = tk.Button(registerpage, text="Registrar", command=lambda:registrar(userinput.get(), passinput.get()))
-    btnRegistrar.grid(row=5, column=1, pady=10)
+    btnRegistrar.grid(row=6, column=1, pady=10)
+
+    if logincorrecto.winfo_ismapped():
+        btnRegistrar["state"] = tk.DISABLED
 
   
 
