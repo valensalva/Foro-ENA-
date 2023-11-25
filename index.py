@@ -1,7 +1,12 @@
 import tkinter as tk
-
-
+from tkinter import ttk
 import sqlite3
+
+def pagina_principal():
+    principal = tk.Tk()
+    principal.title("Foro ENA!")
+    
+    principal.mainloop()
 
 #ventana de registro
 
@@ -33,7 +38,6 @@ def logeo():
     loginpage.title("Ingresar a ENA!")
     loginpage.geometry("300x200")
 
-    
     #inputs y texto
     texto1 = tk.Label(loginpage, text="Usuario")
     userinput = tk.Entry(loginpage)
@@ -41,24 +45,33 @@ def logeo():
     texto1.grid(row=1, column=1,padx= 60)
 
     texto2 = tk.Label(loginpage, text="Contraseña")
-    passinput = tk.Entry(loginpage)
+    passinput = tk.Entry(loginpage, show="*")
     passinput.grid(row=4, column=1,padx= 60)
     texto2.grid(row=3, column=1,padx= 60)
-
-
+    
     def dbcomparar():
         user = userinput.get()
-        print(user)
+        psw = passinput.get()
+        query = "SELECT * FROM usuario WHERE nombre = '{0}' AND contra = '{1}'".format(user, psw)
+        res12 = runquery(query)
+        if (len(res12)==0):
+            warning2=tk.Label(loginpage, text="El usuario o la contraseña no son correctos", fg= "red")
+            warning2.grid(row=5, column=1)
+            warning2.after(3000, lambda:warning2.grid_forget())
+        else:
+            loginpage.destroy()
+            login.destroy()
+            pagina_principal()
 
     btnLogear = tk.Button(loginpage, text="Ingresar", command=lambda:dbcomparar())
-    btnLogear.grid(row=5, column=1, pady=10)
+    btnLogear.grid(row=6, column=1, pady=10)
 
     loginpage.mainloop()
-    
+
 def registro():
     registerpage= tk.Tk()
     registerpage.title("Registrarse en ENA!")
-    registerpage.geometry("300x200")
+    registerpage.geometry("300x220")
 
     #inputs y texto
     texto1 = tk.Label(registerpage, text="Usuario")
@@ -78,7 +91,7 @@ def registro():
         if (user == "" or psw == ""):
             warning=tk.Tk()
             warning.title("forrrrrrrrrro")
-            warning.geometry("200x100")
+            warning.geometry("200x120")
             wtext=tk.Label(warning, text="Completa los campos forrrrro")
             wboton=tk.Button(warning,text="bueno perdon :(", command=warning.destroy)
             wtext.grid(row=1, column=1)
@@ -92,20 +105,16 @@ def registro():
                 volverboton.grid(row=7, column=1, pady=5)
                 logincorrecto = tk.Label(registerpage, text= "Has sido registrado correctamente!", fg="green")
                 logincorrecto.grid(row=3,column=1)
+                info = logincorrecto.grid_info()
             else:
                 warning2=tk.Label(registerpage, text="Ese usuario ya existe, usa otro, puto.", fg= "red")
                 warning2.grid(row=3, column=1)
                 warning2.after(3000,lambda:warning2.grid_forget())
 
-            
+        if info:
+            btnRegistrar["state"] = tk.DISABLED
         
     btnRegistrar = tk.Button(registerpage, text="Registrar", command=lambda:registrar(userinput.get(), passinput.get()))
     btnRegistrar.grid(row=6, column=1, pady=10)
 
-    if logincorrecto.winfo_ismapped():
-        btnRegistrar["state"] = tk.DISABLED
-
-  
-
 login.mainloop()
-
